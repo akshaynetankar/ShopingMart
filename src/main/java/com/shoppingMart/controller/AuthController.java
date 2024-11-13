@@ -1,14 +1,19 @@
 package com.shoppingMart.controller;
 
 import com.shoppingMart.entities.Customer;
-import com.shoppingMart.services.AdminService;
+import com.shoppingMart.entities.LoginRequest;
 import com.shoppingMart.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -16,8 +21,6 @@ public class AuthController {
     @Autowired
     private CustomerService customerService;
 
-    @Autowired
-    private AdminService adminService;
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody Customer customer) {
         try{
@@ -30,13 +33,23 @@ public class AuthController {
             }
         }
 
+        //Login method
+    @PostMapping("/login")
+    public ResponseEntity<String>login(@RequestBody LoginRequest loginRequest){
+        Optional<Customer> customer =customerService.login(loginRequest.getEmail(), loginRequest.getPassword());
+        if(customer.isPresent()) {
+            return ResponseEntity.ok("Login Successful. ");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
+
+    }
         @PostMapping("/logout")
         public ResponseEntity<String> logout(){
 
         //Implement session invalidation logic here
             return ResponseEntity.ok("Logged out Successfully..!");
-
-
 
         }
 

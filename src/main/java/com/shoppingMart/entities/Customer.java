@@ -25,7 +25,7 @@ public class Customer {
     private String email;
 
     @NotBlank
-    @Size(min = 8)
+    @Column(nullable = false, length = 60)
     private String password;
 
 
